@@ -1,0 +1,24 @@
+<% include ./partials/header.ejs %>
+
+<div class="container main">
+    <table style="width:100%">
+        <tr>
+            <th>Title</th>
+            <th>Last Read</th>
+            <th>Genre</th>
+            <th>Rating</th>
+            <th>Author</th>
+        </tr>
+        <% lists.forEach(function(list) { %>
+            <tr>
+                <th><%= list.title %></th>
+                <th><%= list.lastRead %></th>
+                <th><%= list.genre %></th>
+                <th><%= list.rating %></th>
+                <th><%= list.author %></th>
+            </tr>
+        <% }); %>
+    </table>
+</div>
+
+<% include ./partials/footer.ejs %>

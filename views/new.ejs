@@ -1,0 +1,30 @@
+<% include ./partials/header.ejs %>
+
+<div class="ui segment container main">
+    <div class="ui header huge">Add New Reading</div>
+    <form class="ui form" action="/lists" method="POST">
+        <div class="field">
+            <label>Title</label>
+            <input type="text" name="list[title]" placeholder="Book title">
+        </div>
+        <div class="field">
+            <label>Last Read</label>
+            <input type="text" name="list[lastRead]" placeholder="Last chapter read">
+        </div>
+        <div class="field">
+            <label>Genre</label>
+            <input type="text" name="list[genre]" placeholder="Book genre">
+        </div>
+        <div class="field">
+            <label>Rating</label>
+            <input type="number" name="list[rating]" min="1" max="5" placeholder="Give rating of 1 to 5.">
+        </div>
+        <div class="field">
+            <label>Author</label>
+            <input type="text" name="list[author]" placeholder="Book author">
+        </div>
+        <input type="submit">
+    </form>
+</div>
+
+<% include ./partials/footer.ejs %>
