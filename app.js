@@ -25,6 +25,7 @@ mongoose.connect(
 
 var listSchema = new mongoose.Schema({
     title: String,
+    image: String,
     lastRead: String,
     genre: String,
     rating: Number,
@@ -89,6 +90,19 @@ app.post("/lists", function(req, res) {
            res.redirect("/lists");
        }
    });
+});
+
+//-- Show --//
+app.get("/lists/:id", function(req, res) {
+    List.findById(req.params.id, function(err, foundList) {
+       if (err) {
+           alert("Cannot find this book.");
+           res.redirect("/lists");
+       }
+       else {
+           res.render("show", {list: foundList});
+       }
+    });
 });
 
 //------------------------------------------------------------------------------

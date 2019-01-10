@@ -1,23 +1,25 @@
 <% include ./partials/header.ejs %>
 
-<div class="container main">
-    <table style="width:100%">
-        <tr>
+<div class="ui container main">
+    <table class="ui selectable celled table">
+        <thead><tr>
             <th>Title</th>
             <th>Last Read</th>
             <th>Genre</th>
             <th>Rating</th>
             <th>Author</th>
-        </tr>
+        </tr></thead>
+        <tbody>
         <% lists.forEach(function(list) { %>
             <tr>
-                <th><%= list.title %></th>
-                <th><%= list.lastRead %></th>
-                <th><%= list.genre %></th>
-                <th><%= list.rating %></th>
-                <th><%= list.author %></th>
+                <td><a href="/lists/<%=list._id%>"><%= list.title %></a></td>
+                <td><%= list.lastRead %></td>
+                <td><%= list.genre %></td>
+                <td><%= list.rating %></td>
+                <td><%= list.author %></td>
             </tr>
         <% }); %>
+        </tbody>
     </table>
 </div>
 

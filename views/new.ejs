@@ -5,23 +5,27 @@
     <form class="ui form" action="/lists" method="POST">
         <div class="field">
             <label>Title</label>
-            <input type="text" name="list[title]" placeholder="Book title">
+            <input type="text" name="list[title]" placeholder="Book title" required>
+        </div>
+        <div class="field">
+            <label>Image Link</label>
+            <input type="text" name="list[image]" placeholder="Image link" required>
         </div>
         <div class="field">
             <label>Last Read</label>
-            <input type="text" name="list[lastRead]" placeholder="Last chapter read">
+            <input type="text" name="list[lastRead]" placeholder="Last chapter read" required>
         </div>
         <div class="field">
             <label>Genre</label>
-            <input type="text" name="list[genre]" placeholder="Book genre">
+            <input type="text" name="list[genre]" placeholder="Book genre" required>
         </div>
         <div class="field">
             <label>Rating</label>
-            <input type="number" name="list[rating]" min="1" max="5" placeholder="Give rating of 1 to 5.">
+            <input type="number" name="list[rating]" min="1" max="5" placeholder="Give rating of 1 to 5." required>
         </div>
         <div class="field">
             <label>Author</label>
-            <input type="text" name="list[author]" placeholder="Book author">
+            <input type="text" name="list[author]" placeholder="Book author" required>
         </div>
         <input type="submit">
     </form>
