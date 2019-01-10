@@ -3,9 +3,11 @@
 //------------------------------------------------------------------------------
 
 var methodOverride = require("method-override");
+var requestPromise = require('request-promise');
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 var express = require("express");
+var cheerio = require("cheerio");
 var app = express();
 
 //------------------------------------------------------------------------------
@@ -28,30 +30,34 @@ mongoose.connect(
 var listSchema = new mongoose.Schema({
     title: String,
     image: String,
+    source: String,
     lastRead: String,
     genre: String,
     rating: Number,
-    author: String
+    author: String,
+    newAvail: String
 });
 
 var List = mongoose.model("List", listSchema);
 
-// List.create({
-//     title      : "驭灵师",
-//     lastRead   : "第十五话 寻龙（01）",
-//     genre      : "少年",
-//     rating     : "5",
-//     author     : "时代漫王"
-// }, function(err, Blog) {
-//     if (err) {
-//         console.log("Cannot create new list:")
-//         console.log(err);
-//     }
-//     else {
-//         console.log("New list is created:")
-//         console.log(Blog);
-//     }
-// });
+//------------------------------------------------------------------------------
+//  Webscraping Test
+//------------------------------------------------------------------------------
+
+// var url = 'https://ac.qq.com/Comic/comicInfo/id/536658';
+// var bookUrls = [];
+
+// requestPromise(url)
+//     .then(function(html){
+//         var chapterLength = cheerio('.works-chapter-item > a', html).length;
+        
+//         bookUrls.push(cheerio('.works-chapter-item > a', html)[chapterLength-1].attribs.href);
+        
+//         console.log("Done scraping.")
+//     })
+//     .catch(function(html){
+//         console.log("HTML request failed.");
+//     });
 
 //------------------------------------------------------------------------------
 //  RESTful Routes
@@ -66,7 +72,7 @@ app.get("/", function(req, res) {
 app.get("/lists", function(req, res) {
     List.find({}, function(err, lists) {
         if (err) {
-           console.log("Cannot find lists");
+           console.log("Cannot find books for index.");
            console.log(err);
        }
        else {
@@ -85,7 +91,7 @@ app.get("/lists/new", function(req, res) {
 app.post("/lists", function(req, res) {
    List.create(req.body.list, function(err, newList) {
        if (err) {
-           console.log("Cannot create new blog post.");
+           console.log("Cannot create new book.");
            res.render("new");
        }
        else {
@@ -98,7 +104,7 @@ app.post("/lists", function(req, res) {
 app.get("/lists/:id", function(req, res) {
     List.findById(req.params.id, function(err, foundList) {
        if (err) {
-           console.log("Cannot find this book.");
+           console.log("Cannot find this book for show.");
            res.redirect("/lists");
        }
        else {
@@ -144,6 +150,11 @@ app.delete("/lists/:id", function(req, res) {
             res.redirect("/lists");
         }
     });
+});
+
+//-- Web Scraping Test--//
+app.get("/test", function(req, res) {
+    res.render("test", {bookUrls: bookUrls});
 });
 
 //------------------------------------------------------------------------------
