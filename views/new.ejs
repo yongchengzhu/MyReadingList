@@ -3,31 +3,31 @@
 <div class="ui segment container main">
     <div class="ui header huge">Add New Reading</div>
     <form class="ui form" action="/lists" method="POST">
-        <div class="field">
+        <div class="field required">
             <label>Title</label>
             <input type="text" name="list[title]" placeholder="Book title" required>
         </div>
-        <div class="field">
+        <div class="field required">
             <label>Image Link</label>
             <input type="text" name="list[image]" placeholder="Image link" required>
         </div>
-        <div class="field">
+        <div class="field required">
             <label>Last Read</label>
             <input type="text" name="list[lastRead]" placeholder="Last chapter read" required>
         </div>
-        <div class="field">
+        <div class="field required">
             <label>Genre</label>
             <input type="text" name="list[genre]" placeholder="Book genre" required>
         </div>
-        <div class="field">
+        <div class="field required">
             <label>Rating</label>
             <input type="number" name="list[rating]" min="1" max="5" placeholder="Give rating of 1 to 5." required>
         </div>
-        <div class="field">
+        <div class="field required">
             <label>Author</label>
             <input type="text" name="list[author]" placeholder="Book author" required>
         </div>
-        <input type="submit">
+        <input type="submit" class="ui button">
     </form>
 </div>
 

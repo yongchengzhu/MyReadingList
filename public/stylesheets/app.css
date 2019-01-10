@@ -5,3 +5,11 @@
 i.icon {
     font-size: 2em;
 }
+
+#rating {
+    margin-top: 2em;
+}
+
+#delete {
+    display: inline;
+}

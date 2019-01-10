@@ -2,9 +2,10 @@
 //  App Requirements
 //------------------------------------------------------------------------------
 
-var express = require("express");
-var mongoose = require("mongoose");
+var methodOverride = require("method-override");
 var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+var express = require("express");
 var app = express();
 
 //------------------------------------------------------------------------------
@@ -14,6 +15,7 @@ var app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
 
 //------------------------------------------------------------------------------
 //  Database Config
@@ -83,8 +85,8 @@ app.get("/lists/new", function(req, res) {
 app.post("/lists", function(req, res) {
    List.create(req.body.list, function(err, newList) {
        if (err) {
-           res.render("new");
            console.log("Cannot create new blog post.");
+           res.render("new");
        }
        else {
            res.redirect("/lists");
@@ -96,12 +98,51 @@ app.post("/lists", function(req, res) {
 app.get("/lists/:id", function(req, res) {
     List.findById(req.params.id, function(err, foundList) {
        if (err) {
-           alert("Cannot find this book.");
+           console.log("Cannot find this book.");
            res.redirect("/lists");
        }
        else {
            res.render("show", {list: foundList});
        }
+    });
+});
+
+//-- Edit --//
+app.get("/lists/:id/edit", function(req, res) {
+    List.findById(req.params.id, function(err, foundList) {
+        if (err) {
+            console.log("Cannot find list to edit.");
+            res.redirect("/lists");
+        }
+        else {
+            res.render("edit", {list: foundList});
+        }
+    });
+});
+
+//-- Update --//
+app.put("/lists/:id", function(req, res) {
+    List.findByIdAndUpdate(req.params.id, req.body.list, function(err) {
+        if (err) {
+            console.log("Cannot update this book.");
+            res.redirect("/lists");
+        }
+        else {
+            res.redirect("/lists/" + req.params.id);
+        }
+    });
+});
+
+//-- Delete --//
+app.delete("/lists/:id", function(req, res) {
+    List.findByIdAndRemove(req.params.id, req.body.list, function(err) {
+        if (err) {
+            console.log("Cannot remove this book.");
+            res.redirect("/lists");
+        }
+        else {
+            res.redirect("/lists");
+        }
     });
 });
 
