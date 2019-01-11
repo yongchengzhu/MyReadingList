@@ -1,3 +1,12 @@
-<% bookUrls.forEach(function(bookUrl) { %>
-    https://ac.qq.com<%= bookUrl %><br>
-<% }); %>
+<% include ./partials/header.ejs %>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<div class="ui container main">
+    asdfsadfsfd
+    <div class="ui rating" data-max-rating="1"></div>
+    <div class="ui heart rating" data-rating="1" data-max-rating="3"></div>
+    <% $('.rating').rating({initialRating: 3, maxRating: 5}); %>
+</div>
+
+<% include ./partials/header.ejs %>

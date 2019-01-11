@@ -8,7 +8,6 @@
             <th>Genre</th>
             <th>Rating</th>
             <th>Author</th>
-            <th>Newest Chapter</th>
         </tr></thead>
         <tbody>
         <% lists.forEach(function(list) { %>
@@ -18,7 +17,6 @@
                 <td><%= list.genre %></td>
                 <td><%= list.rating %></td>
                 <td><%= list.author %></td>
-                <td><%= list.newAvail %></td>
             </tr>
         <% }); %>
         </tbody>

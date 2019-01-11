@@ -30,34 +30,13 @@ mongoose.connect(
 var listSchema = new mongoose.Schema({
     title: String,
     image: String,
-    source: String,
     lastRead: String,
     genre: String,
     rating: Number,
     author: String,
-    newAvail: String
 });
 
 var List = mongoose.model("List", listSchema);
-
-//------------------------------------------------------------------------------
-//  Webscraping Test
-//------------------------------------------------------------------------------
-
-// var url = 'https://ac.qq.com/Comic/comicInfo/id/536658';
-// var bookUrls = [];
-
-// requestPromise(url)
-//     .then(function(html){
-//         var chapterLength = cheerio('.works-chapter-item > a', html).length;
-        
-//         bookUrls.push(cheerio('.works-chapter-item > a', html)[chapterLength-1].attribs.href);
-        
-//         console.log("Done scraping.")
-//     })
-//     .catch(function(html){
-//         console.log("HTML request failed.");
-//     });
 
 //------------------------------------------------------------------------------
 //  RESTful Routes
@@ -152,9 +131,9 @@ app.delete("/lists/:id", function(req, res) {
     });
 });
 
-//-- Web Scraping Test--//
+//-- Test --//
 app.get("/test", function(req, res) {
-    res.render("test", {bookUrls: bookUrls});
+    res.render("test");
 });
 
 //------------------------------------------------------------------------------
