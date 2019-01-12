@@ -1,17 +1,17 @@
 //------------------------------------------------------------------------------
-//  App Requirements
+//  Package Requirements
 //------------------------------------------------------------------------------
 
 var methodOverride = require("method-override");
 var requestPromise = require('request-promise');
-var bodyParser = require("body-parser");
-var mongoose = require("mongoose");
-var express = require("express");
-var cheerio = require("cheerio");
-var app = express();
+var bodyParser     = require("body-parser");
+var mongoose       = require("mongoose");
+var express        = require("express");
+var cheerio        = require("cheerio");
+var app            = express();
 
 //------------------------------------------------------------------------------
-//  App Config
+//  App Configurations
 //------------------------------------------------------------------------------
 
 app.set("view engine", "ejs");
@@ -20,23 +20,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
 //------------------------------------------------------------------------------
-//  Database Config
+//  Database Configurations
 //------------------------------------------------------------------------------
 
 mongoose.connect(
     "mongodb://localhost:27017/webreadinglist_app", {useNewUrlParser:true}
 );
 
-var listSchema = new mongoose.Schema({
-    title: String,
-    image: String,
-    lastRead: String,
-    genre: String,
-    rating: Number,
-    author: String,
-});
-
-var List = mongoose.model("List", listSchema);
+var List = require("./models/list.js");
 
 //------------------------------------------------------------------------------
 //  RESTful Routes
