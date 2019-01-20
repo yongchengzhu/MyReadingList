@@ -18,3 +18,11 @@ i.icon {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+.submitLink {
+    background-color: transparent;
+    text-decoration: underline;
+    border: none;
+    cursor: pointer;
+    cursor: hand;
+}

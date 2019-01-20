@@ -5,18 +5,20 @@
         <div class="row">
             <!--Left Sidebar-->
             <div class="four wide column">
-                <div class="ui segments">
-                    <div class="ui segment">
-                        <strong>Sorting stuff</strong>
-                    </div>
-                    <!--Sort Button-->
-                    <div class="ui segment">
+                <div class="ui vertical menu">
+                    <div class="item">
+                        <!--Sorting Label-->
+                        <div class="header">
+                            Sorting stuff
+                        </div>
+                        
+                        <!--Sort Button-->
                         <form action="/" method="POST">
                             <input type="hidden" name="sort" value="rating">
                             <button class="ui button sort">Sort by Rating</button>
                         </form>
                         <form action="/" method="POST">
-                            <input type="hidden" name="sort" value="date">
+                            <input type="hidden" name="sort" value="created">
                             <button class="ui button sort">Sort by Date</button>
                         </form>
                     </div>

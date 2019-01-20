@@ -37,32 +37,29 @@ app.get("/", function(req, res) {
 });
 
 //-- Sort --//
+var sortOrder = -1;
+var key;
 app.post("/", function(req, res) {
-    console.log(req.body.sort);
+    var sortObj = {};
     
-    if (req.body.sort == "rating") {
-        List.find({}).sort({rating: -1}).exec(function(err, sortedLists) {
-            if (err) {
-                console.log("Cannot sort.");
-            }
-            else {
-                console.log("sorted by rate");
-                res.render("index", {lists: sortedLists});
-            }
-        });
+    if (key == req.body.sort) {
+        sortOrder *= -1;
+    }
+    else {
+        key = req.body.sort;
+        sortOrder = -1;
     }
     
-    if (req.body.sort == "date") {
-        List.find({}).sort({created: 1}).exec(function(err, sortedLists) {
-            if (err) {
-                console.log("Cannot sort.");
-            }
-            else {
-                console.log("sorted by date");
-                res.render("index", {lists: sortedLists});
-            }
-        });
-    }
+    sortObj[key] = sortOrder;
+    
+    List.find({}).sort(sortObj).exec(function(err, sortedLists) {
+        if (err) {
+            console.log("Cannot sort.");
+        }
+        else {
+            res.render("index", {lists: sortedLists});
+        }
+    });
 });
 
 //-- Index --//
