@@ -20,15 +20,26 @@
             <input type="text" name="list[genre]" placeholder="Book genre" required>
         </div>
         <div class="field required">
-            <label>Rating</label>
-            <input type="number" name="list[rating]" min="1" max="5" placeholder="Give rating of 1 to 5." required>
-        </div>
-        <div class="field required">
             <label>Author</label>
             <input type="text" name="list[author]" placeholder="Book author" required>
         </div>
+        <div class="field required">
+            <label>Rating</label>
+            <div class="ui rating heart mini"></div>
+        </div>
+        <input type="hidden" name="list[rating]" value="">
+        
         <input type="submit" class="ui button">
     </form>
 </div>
+
+<script>
+    var hearts = $(".rating.ui");
+    hearts.rating({maxRating: 5});
+    
+    hearts.on("click", function() {
+        $("input[name='list[rating]']").val(hearts.rating("get rating"));
+    });
+</script>
 
 <% include ./partials/footer.ejs %>

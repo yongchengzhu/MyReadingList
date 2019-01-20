@@ -30,16 +30,46 @@ var List = require("./models/list.js");
 //------------------------------------------------------------------------------
 //  Routes
 //------------------------------------------------------------------------------
-
+  
 //-- Root --//
 app.get("/", function(req, res) {
     res.redirect("/lists");
 });
 
+//-- Index --//
+app.get("/lists", function(req, res) {
+    List.find({}, function(err, lists) {
+        if (err) {
+           console.log("Cannot find books for index.");
+           console.log(err);
+       }
+       else {
+           res.render("index", {lists: lists});
+       }
+    });
+});
+
 //-- Sort --//
 var sortOrder = -1;
 var key;
-app.post("/", function(req, res) {
+
+app.get("/lists/sorted", function(req, res) {
+    var sortObj = {};
+    
+    sortObj[key] = sortOrder;
+    
+    List.find({}).sort(sortObj).exec(function(err, sortedLists) {
+        if (err) {
+            console.log("Cannot sort.");
+        }
+        else {
+            res.render("index", {lists: sortedLists});
+        }
+    });
+});
+
+
+app.post("/lists/sorted", function(req, res) {
     var sortObj = {};
     
     if (key == req.body.sort) {
@@ -57,23 +87,10 @@ app.post("/", function(req, res) {
             console.log("Cannot sort.");
         }
         else {
-            res.render("index", {lists: sortedLists});
+            // res.render("index", {lists: sortedLists});
+            res.redirect("/lists/sorted");
         }
     });
-});
-
-//-- Index --//
-app.get("/lists", function(req, res) {
-    List.find({}, function(err, lists) {
-        if (err) {
-           console.log("Cannot find books for index.");
-           console.log(err);
-       }
-       else {
-           res.render("index", {lists: lists});
-       }
-    });
-    
 });
 
 //-- New --//

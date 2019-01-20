@@ -20,15 +20,26 @@
             <input type="text" name="list[genre]" value="<%=list.genre%>" required>
         </div>
         <div class="field required">
-            <label>Rating</label>
-            <input type="number" name="list[rating]" min="1" max="5" value="<%=list.rating%>" required>
-        </div>
-        <div class="field required">
             <label>Author</label>
             <input type="text" name="list[author]" value="<%=list.author%>" required>
         </div>
+        <div class="field required">
+            <label>Rating</label>
+            <!--<input type="number" name="list[rating]" min="1" max="5" value="<%=list.rating%>" required>-->
+            <div class="ui rating heart mini" data-rating=<%=list.rating%>></div>
+        </div>
+        <input type="hidden" name="list[rating]" value=<%=list.rating%>>
+        
         <input type="submit" value="Edit" class="ui button">
     </form>
 </div>
+
+<script>
+    $(".ui.rating").rating({ maxRating: 5 });
+    
+    $(".ui.rating").on("click", function() {
+        $("input[name='list[rating]']").val($(".ui.rating").rating("get rating"));
+    });
+</script>
 
 <% include ./partials/footer.ejs %>

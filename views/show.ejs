@@ -16,8 +16,8 @@
                 
                 <div class="description">
                     <p id="rating">Rating:</p>
-                    <span><%=list.rating%></span> <br>
-                    <span><%=list.created%></span>
+                    <div class="ui rating mini heart" data-rating="<%=list.rating%>" data-max-rating="5"></div>
+                    <br>
                 </div>
                 
                 <div class="extra">
@@ -32,5 +32,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(".ui.rating").rating("disable");
+</script>
 
 <% include ./partials/footer.ejs %>

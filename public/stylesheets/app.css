@@ -26,3 +26,7 @@ i.icon {
     cursor: pointer;
     cursor: hand;
 }
+
+.ui.celled.table tr th {
+    cursor: pointer;
+}

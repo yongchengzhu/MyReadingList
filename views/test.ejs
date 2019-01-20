@@ -1,9 +1,15 @@
 <% include ./partials/header.ejs %>
 
 <div class="ui container main">
-    <p>asdfsadfsfd</p>
+    <p>some text</p>
     
-    <div class="ui heart rating" data-rating="1" data-max-rating="3"></div>
+    <div class="ui heart mini rating"></div>
+    
+    <script>
+        $(".ui.rating").rating({ maxRating: 5 });
+        var test = $(".ui.rating").rating("get rating");
+    </script>
+    
 </div>
 
 <% include ./partials/header.ejs %>
