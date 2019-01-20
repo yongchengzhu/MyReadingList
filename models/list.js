@@ -7,6 +7,7 @@ var listSchema = new mongoose.Schema({
     genre: String,
     rating: Number,
     author: String,
+    created: { type: Date, default: Date.now }
 });
 
 var List = mongoose.model("List", listSchema);

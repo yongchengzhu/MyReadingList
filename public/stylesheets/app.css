@@ -13,3 +13,8 @@ i.icon {
 #delete {
     display: inline;
 }
+
+.sort.button {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

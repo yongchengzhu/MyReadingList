@@ -1,26 +1,55 @@
 <% include ./partials/header.ejs %>
 
 <div class="ui container main">
-    <table class="ui selectable celled table">
-        <thead><tr>
-            <th>Title</th>
-            <th>Last Read</th>
-            <th>Genre</th>
-            <th>Rating</th>
-            <th>Author</th>
-        </tr></thead>
-        <tbody>
-        <% lists.forEach(function(list) { %>
-            <tr>
-                <td><a href="/lists/<%=list._id%>"><%= list.title %></a></td>
-                <td><%= list.lastRead %></td>
-                <td><%= list.genre %></td>
-                <td><%= list.rating %></td>
-                <td><%= list.author %></td>
-            </tr>
-        <% }); %>
-        </tbody>
-    </table>
+    <div class="ui grid">
+        <div class="row">
+            <!--Left Sidebar-->
+            <div class="four wide column">
+                <div class="ui segments">
+                    <div class="ui segment">
+                        <strong>Sorting stuff</strong>
+                    </div>
+                    <!--Sort Button-->
+                    <div class="ui segment">
+                        <form action="/" method="POST">
+                            <input type="hidden" name="sort" value="rating">
+                            <button class="ui button sort">Sort by Rating</button>
+                        </form>
+                        <form action="/" method="POST">
+                            <input type="hidden" name="sort" value="date">
+                            <button class="ui button sort">Sort by Date</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!--Table-->
+            <div class="twelve wide column">
+                <table class="ui selectable celled table">
+                    <thead><tr>
+                        <th>Title</th>
+                        <th>Last Read</th>
+                        <th>Genre</th>
+                        <th>Rating</th>
+                        <th>Author</th>
+                        <th>Last Activity Timestamp</th>
+                    </tr></thead>
+                    <tbody>
+                    <% lists.forEach(function(list) { %>
+                        <tr>
+                            <td><a href="/lists/<%=list._id%>"><%= list.title %></a></td>
+                            <td><%= list.lastRead %></td>
+                            <td><%= list.genre %></td>
+                            <td><%= list.rating %></td>
+                            <td><%= list.author %></td>
+                            <td><%= list.created %></td>
+                        </tr>
+                    <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <% include ./partials/footer.ejs %>

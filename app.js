@@ -3,11 +3,9 @@
 //------------------------------------------------------------------------------
 
 var methodOverride = require("method-override");
-var requestPromise = require('request-promise');
 var bodyParser     = require("body-parser");
 var mongoose       = require("mongoose");
 var express        = require("express");
-var cheerio        = require("cheerio");
 var app            = express();
 
 //------------------------------------------------------------------------------
@@ -30,12 +28,41 @@ mongoose.connect(
 var List = require("./models/list.js");
 
 //------------------------------------------------------------------------------
-//  RESTful Routes
+//  Routes
 //------------------------------------------------------------------------------
 
 //-- Root --//
 app.get("/", function(req, res) {
     res.redirect("/lists");
+});
+
+//-- Sort --//
+app.post("/", function(req, res) {
+    console.log(req.body.sort);
+    
+    if (req.body.sort == "rating") {
+        List.find({}).sort({rating: -1}).exec(function(err, sortedLists) {
+            if (err) {
+                console.log("Cannot sort.");
+            }
+            else {
+                console.log("sorted by rate");
+                res.render("index", {lists: sortedLists});
+            }
+        });
+    }
+    
+    if (req.body.sort == "date") {
+        List.find({}).sort({created: 1}).exec(function(err, sortedLists) {
+            if (err) {
+                console.log("Cannot sort.");
+            }
+            else {
+                console.log("sorted by date");
+                res.render("index", {lists: sortedLists});
+            }
+        });
+    }
 });
 
 //-- Index --//
@@ -59,15 +86,16 @@ app.get("/lists/new", function(req, res) {
 
 //-- Create --//
 app.post("/lists", function(req, res) {
-   List.create(req.body.list, function(err, newList) {
+    List.create(req.body.list, function(err, newList) {
        if (err) {
            console.log("Cannot create new book.");
            res.render("new");
        }
        else {
+           console.log(req.body.list);
            res.redirect("/lists");
        }
-   });
+    });
 });
 
 //-- Show --//
@@ -98,6 +126,8 @@ app.get("/lists/:id/edit", function(req, res) {
 
 //-- Update --//
 app.put("/lists/:id", function(req, res) {
+    req.body.list.created = Date(Date.now());
+    
     List.findByIdAndUpdate(req.params.id, req.body.list, function(err) {
         if (err) {
             console.log("Cannot update this book.");
@@ -125,6 +155,7 @@ app.delete("/lists/:id", function(req, res) {
 //-- Test --//
 app.get("/test", function(req, res) {
     res.render("test");
+    
 });
 
 //------------------------------------------------------------------------------
