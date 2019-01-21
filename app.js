@@ -2,6 +2,9 @@
 //  Package Requirements
 //------------------------------------------------------------------------------
 
+var passportLocalMongoose = require("passport-local-mongoose");
+var LocalStrategy  = require("passport-local");
+var passport       = require("passport");
 var methodOverride = require("method-override");
 var bodyParser     = require("body-parser");
 var mongoose       = require("mongoose");
@@ -26,6 +29,29 @@ mongoose.connect(
 );
 
 var List = require("./models/list.js");
+var User = require("./models/user.js");
+
+//------------------------------------------------------------------------------
+//  Passport Configurations
+//------------------------------------------------------------------------------
+
+app.use(require("express-session")({
+    secret: "Imagine reading a post, but over the course of it the quality seems to deteriorate and it gets wose an wose, where the swenetence stwucture and gwammer rewerts to a pwoint of uttew non swence, an u jus dont wanna wead it anymwore (o´ω｀o) awd twa wol owdewl",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use(function(req, res, next) {
+    res.locals.currentUser = req.user;
+    next();
+});
 
 //------------------------------------------------------------------------------
 //  Routes
@@ -94,7 +120,7 @@ app.post("/lists/sorted", function(req, res) {
 });
 
 //-- New --//
-app.get("/lists/new", function(req, res) {
+app.get("/lists/new", isLoggedIn, function(req, res) {
    res.render("new");
 });
 
@@ -166,10 +192,67 @@ app.delete("/lists/:id", function(req, res) {
     });
 });
 
+// 
+// Register: New Route
+// 
+app.get("/register", function(req, res) {
+    res.render("register");
+});
+
+// 
+// Register: Create route
+// 
+app.post("/register", function(req, res) {
+    User.register(new User({username: req.body.username}), req.body.password, function(err, createdUser) {
+        if (err) {
+            res.redirect("/register");
+        }
+        else {
+            passport.authenticate("local")(req, res, function() {
+                res.redirect("/lists");
+            });
+        }
+    });
+});
+
+// 
+// Login: New route
+// 
+app.get("/login", function(req, res) {
+    res.render("login");
+});
+
+// 
+// Login: Create route
+// 
+app.post("/login", passport.authenticate("local", {successRedirect: "/lists", failureRedirect: "/login"}), function(req, res) {
+    
+});
+
+// 
+// Logout Route
+// 
+app.get("/logout", function(req, res) {
+    req.logout();
+    res.redirect("/lists");
+});
+
+// 
+// Middleware
+// 
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    else {
+        res.redirect("/login");
+    }
+}
+
+
 //-- Test --//
 app.get("/test", function(req, res) {
     res.render("test");
-    
 });
 
 //------------------------------------------------------------------------------

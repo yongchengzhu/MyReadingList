@@ -13,6 +13,13 @@
                 <a class="item header" href="/"><i class="icon book"></i>MyReadingList</a>
                 <a class="item" href="/">Home</a>
                 <a class="item" href="/lists/new">Add New</a>
+                <% if (!currentUser) { %>
+                    <a class="item" href="/login">Login</a>
+                    <a class="item" href="/register">Register</a>
+                <% } else {%>
+                    <a class="item"><%= currentUser.username %></a>
+                    <a class="item" href="/logout">Logout</a>
+                <% } %>
                 <!--<a class="item" href="/test">Test</a>-->
             </div>
         </div>

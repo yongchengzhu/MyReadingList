@@ -43,7 +43,7 @@
                 <td><%= list.genre %></td>
                 <td><div class="ui mini heart rating" data-rating=<%= list.rating %>></div></td>
                 <td><%= list.author %></td>
-                <td><%= list.created %></td>
+                <td><%= list.created.toLocaleDateString() %> <%= list.created.toLocaleTimeString() %></td>
             </tr>
         <% }); %>
         </tbody>
