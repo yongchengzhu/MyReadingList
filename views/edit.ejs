@@ -8,6 +8,10 @@
             <input type="text" name="list[title]" value="<%=list.title%>" required>
         </div>
         <div class="field required">
+            <label>Author</label>
+            <input type="text" name="list[author]" value="<%=list.author%>" required>
+        </div>
+        <div class="field required">
             <label>Image Link</label>
             <input type="text" name="list[image]" value="<%=list.image%>" required>
         </div>
@@ -17,20 +21,28 @@
         </div>
         <div class="field required">
             <label>Genre</label>
-            <input type="text" name="list[genre]" value="<%=list.genre%>" required>
-        </div>
-        <div class="field required">
-            <label>Author</label>
-            <input type="text" name="list[author]" value="<%=list.author%>" required>
+            <!--<input type="text" name="list[genre]" value="<%=list.genre%>" required>-->
+            <div class="ui small buttons">
+                <% if (list.genre == "少年") { %>
+                    <div id="shounenButton" class="ui button active">少年</div>
+                    <div class="or"></div>
+                    <div id="shoujoButton" class="ui button">少女</div>
+                <% } else { %>
+                    <div id="shounenButton" class="ui button">少年</div>
+                    <div class="or"></div>
+                    <div id="shoujoButton" class="ui button active">少女</div>
+                <% } %>
+                
+            </div>            
         </div>
         <div class="field required">
             <label>Rating</label>
-            <!--<input type="number" name="list[rating]" min="1" max="5" value="<%=list.rating%>" required>-->
             <div class="ui rating heart mini" data-rating=<%=list.rating%>></div>
         </div>
+        <input type="hidden" name="list[genre]" value=<%=list.genre%>>
         <input type="hidden" name="list[rating]" value=<%=list.rating%>>
         
-        <input type="submit" value="Edit" class="ui button">
+        <input type="submit" value="Submit" class="ui button">
     </form>
 </div>
 
@@ -40,6 +52,21 @@
     $(".ui.rating").on("click", function() {
         $("input[name='list[rating]']").val($(".ui.rating").rating("get rating"));
     });
+    
+    var shounen = $("#shounenButton");
+    var shoujo = $("#shoujoButton");
+    
+    shounen.on("click", function() {
+        shoujo.removeClass("active");
+        shounen.addClass("active");
+        $("input[name='list[genre]']").val("少年");
+    });
+    
+    shoujo.on("click", function() {
+        shounen.removeClass("active");
+        shoujo.addClass("active");
+        $("input[name='list[genre]']").val("少女");
+    });    
 </script>
 
 <% include ./partials/footer.ejs %>

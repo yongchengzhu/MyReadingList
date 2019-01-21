@@ -38,7 +38,7 @@ app.get("/", function(req, res) {
 
 //-- Index --//
 app.get("/lists", function(req, res) {
-    List.find({}, function(err, lists) {
+    List.find({}).sort({created: "-1"}).exec(function(err, lists) {
         if (err) {
            console.log("Cannot find books for index.");
            console.log(err);

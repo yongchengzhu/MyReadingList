@@ -8,6 +8,10 @@
             <input type="text" name="list[title]" placeholder="Book title" required>
         </div>
         <div class="field required">
+            <label>Author</label>
+            <input type="text" name="list[author]" placeholder="Book author" required>
+        </div>
+        <div class="field required">
             <label>Image Link</label>
             <input type="text" name="list[image]" placeholder="Image link" required>
         </div>
@@ -17,16 +21,18 @@
         </div>
         <div class="field required">
             <label>Genre</label>
-            <input type="text" name="list[genre]" placeholder="Book genre" required>
-        </div>
-        <div class="field required">
-            <label>Author</label>
-            <input type="text" name="list[author]" placeholder="Book author" required>
+            <!--<input type="text" name="list[genre]" placeholder="Book genre" required>-->
+            <div class="ui small buttons">
+                <div id="shounenButton" class="ui button">少年</div>
+                <div class="or"></div>
+                <div id="shoujoButton" class="ui button">少女</div>
+            </div>
         </div>
         <div class="field required">
             <label>Rating</label>
             <div class="ui rating heart mini"></div>
         </div>
+        <input type="hidden" name="list[genre]" value="">
         <input type="hidden" name="list[rating]" value="">
         
         <input type="submit" class="ui button">
@@ -39,6 +45,21 @@
     
     hearts.on("click", function() {
         $("input[name='list[rating]']").val(hearts.rating("get rating"));
+    });
+    
+    var shounen = $("#shounenButton");
+    var shoujo = $("#shoujoButton");
+    
+    shounen.on("click", function() {
+        shoujo.removeClass("active");
+        shounen.addClass("active");
+        $("input[name='list[genre]']").val("少年");
+    });
+    
+    shoujo.on("click", function() {
+        shounen.removeClass("active");
+        shoujo.addClass("active");
+        $("input[name='list[genre]']").val("少女");
     });
 </script>
 
