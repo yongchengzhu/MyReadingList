@@ -24,11 +24,13 @@
                 
                 <div class="extra">
                     <!--Buttons-->
-                    <a class="ui button" href="/lists/<%=list._id%>/edit">Edit</a>
+                    <% if(currentUser && currentUser._id.equals(list.creator.id)) { %>
+                        <a class="ui button" href="/lists/<%=list._id%>/edit">Edit</a>
                     
-                    <form id="delete" action="/lists/<%=list._id%>?_method=DELETE" method="POST">
-                        <button class="ui red button">Delete</button>
-                    </form>
+                        <form id="delete" action="/lists/<%=list._id%>?_method=DELETE" method="POST">
+                            <button class="ui red button">Delete</button>
+                        </form>
+                    <% } %>
                 </div>
             </div>
         </div>

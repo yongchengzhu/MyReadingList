@@ -31,6 +31,17 @@ mongoose.connect(
 var List = require("./models/list.js");
 var User = require("./models/user.js");
 
+// List.update({}, { $set: { creator: {
+//     id: "5c4561b2750b36235f37666f",
+//     username: "ycz"
+// }}}, { multi:true }, function(err, updatedUsers) {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(updatedUsers);
+//     }
+// });
+
 //------------------------------------------------------------------------------
 //  Passport Configurations
 //------------------------------------------------------------------------------
@@ -126,13 +137,17 @@ app.get("/lists/new", isLoggedIn, function(req, res) {
 
 //-- Create --//
 app.post("/lists", function(req, res) {
+    req.body.list.creator = {
+        id: req.user._id,
+        username: req.user.username
+    };
+    
     List.create(req.body.list, function(err, newList) {
        if (err) {
            console.log("Cannot create new book.");
            res.render("new");
        }
        else {
-           console.log(req.body.list);
            res.redirect("/lists");
        }
     });
@@ -152,7 +167,7 @@ app.get("/lists/:id", function(req, res) {
 });
 
 //-- Edit --//
-app.get("/lists/:id/edit", function(req, res) {
+app.get("/lists/:id/edit", checkListOwnership, function(req, res) {
     List.findById(req.params.id, function(err, foundList) {
         if (err) {
             console.log("Cannot find list to edit.");
@@ -165,7 +180,7 @@ app.get("/lists/:id/edit", function(req, res) {
 });
 
 //-- Update --//
-app.put("/lists/:id", function(req, res) {
+app.put("/lists/:id", checkListOwnership, function(req, res) {
     req.body.list.created = Date(Date.now());
     
     List.findByIdAndUpdate(req.params.id, req.body.list, function(err) {
@@ -180,7 +195,7 @@ app.put("/lists/:id", function(req, res) {
 });
 
 //-- Delete --//
-app.delete("/lists/:id", function(req, res) {
+app.delete("/lists/:id", checkListOwnership, function(req, res) {
     List.findByIdAndRemove(req.params.id, req.body.list, function(err) {
         if (err) {
             console.log("Cannot remove this book.");
@@ -246,6 +261,24 @@ function isLoggedIn(req, res, next) {
     }
     else {
         res.redirect("/login");
+    }
+}
+
+function checkListOwnership(req, res, next) {
+    if (req.isAuthenticated()) {
+        List.findById(req.params.id, function(err, foundCampground) {
+            if(err) {
+                res.redirect("back");
+            }
+            else {
+                if (foundCampground.author.id.equals(req.user._id)) {
+                    return next();
+                }
+                else {
+                    res.redirect("back");
+                }
+            }
+        })
     }
 }
 

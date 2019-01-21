@@ -34,16 +34,18 @@
         <tbody>
         <% lists.forEach(function(list, i) { %>
             <tr>
-                <td>
-                    <a href="/lists/<%=list._id%>" class="popupTest" data-html="<img class='ui image rounded small' src='<%= list.image %>'>" data-position="left center">
-                        <%= list.title %>
-                    </a>
-                </td>
-                <td><%= list.lastRead %></td>
-                <td><%= list.genre %></td>
-                <td><div class="ui mini heart rating" data-rating=<%= list.rating %>></div></td>
-                <td><%= list.author %></td>
-                <td><%= list.created.toLocaleDateString() %> <%= list.created.toLocaleTimeString() %></td>
+                <% if(currentUser && currentUser._id.equals(list.creator.id)) { %>
+                    <td>
+                        <a href="/lists/<%=list._id%>" class="popupTest" data-html="<img class='ui image rounded small' src='<%= list.image %>'>" data-position="left center">
+                            <%= list.title %>
+                        </a>
+                    </td>
+                    <td><%= list.lastRead %></td>
+                    <td><%= list.genre %></td>
+                    <td><div class="ui mini heart rating" data-rating=<%= list.rating %>></div></td>
+                    <td><%= list.author %></td>
+                    <td><%= list.created.toLocaleDateString() %> <%= list.created.toLocaleTimeString() %></td>
+                <% } %>
             </tr>
         <% }); %>
         </tbody>
