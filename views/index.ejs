@@ -32,9 +32,13 @@
             <th id="createdLabel">Last Activity Timestamp</th>
         </tr></thead>
         <tbody>
-        <% lists.forEach(function(list) { %>
+        <% lists.forEach(function(list, i) { %>
             <tr>
-                <td><a href="/lists/<%=list._id%>"><%= list.title %></a></td>
+                <td>
+                    <a href="/lists/<%=list._id%>" class="popupTest" data-html="<img class='ui image rounded small' src='<%= list.image %>'>" data-position="left center">
+                        <%= list.title %>
+                    </a>
+                </td>
                 <td><%= list.lastRead %></td>
                 <td><%= list.genre %></td>
                 <td><div class="ui mini heart rating" data-rating=<%= list.rating %>></div></td>
@@ -44,9 +48,6 @@
         <% }); %>
         </tbody>
     </table>
-            
-        
-    
 </div>
 
 <script>
@@ -71,6 +72,8 @@
     $('#createdLabel').on("click", function() {
         $("#createdForm").submit();
     });
+    
+    $(".popupTest").popup();
 </script>
 
 <% include ./partials/footer.ejs %>

@@ -6,7 +6,7 @@ i.icon {
     font-size: 2em;
 }
 
-#rating {
+.ui.items>.item>.content p {
     margin-top: 2em;
 }
 
