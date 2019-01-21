@@ -266,12 +266,12 @@ function isLoggedIn(req, res, next) {
 
 function checkListOwnership(req, res, next) {
     if (req.isAuthenticated()) {
-        List.findById(req.params.id, function(err, foundCampground) {
+        List.findById(req.params.id, function(err, foundList) {
             if(err) {
                 res.redirect("back");
             }
             else {
-                if (foundCampground.author.id.equals(req.user._id)) {
+                if (foundList.creator.id.equals(req.user._id)) {
                     return next();
                 }
                 else {
