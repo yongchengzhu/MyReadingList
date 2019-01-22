@@ -1,0 +1,40 @@
+<% include ./partials/header.ejs %>
+
+<div class="ui container main">
+    <!--Table-->
+    <table class="ui selectable celled table">
+        <thead><tr>
+            <th id="titleLabel">Title</th>
+            <th id="lastReadLabel">Last Read</th>
+            <th id="genreLabel">Genre</th>
+            <th id="ratingLabel">Rating</th>
+            <th id="authorLabel">Author</th>
+            <th id="createdLabel">Last Updated</th>
+        </tr></thead>
+        <tbody>
+        <% lists.forEach(function(list, i) { %>
+            <tr>
+                <td>
+                    <div href="#" class="popupTest" data-html="<img class='ui image rounded small' src='<%= list.image %>'>" data-position="left center">
+                        <%= list.title %>
+                    </div>
+                </td>
+                <td><%= list.lastRead %></td>
+                <td><%= list.genre %></td>
+                <td><div class="ui mini heart rating" data-rating=<%= list.rating %>></div></td>
+                <td><%= list.author %></td>
+                <td><%= moment(list.created).fromNow() %></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $('.ui.rating').rating({ maxRating: 5 });
+    $('.ui.rating').rating("disable");
+    
+    $(".popupTest").popup();
+</script>
+
+<% include ./partials/footer.ejs %>

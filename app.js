@@ -271,6 +271,21 @@ app.get("/members", function(req, res) {
 });
 
 // 
+// See Member's Read List (Cannot modify)
+// 
+app.get("/:user/lists", function(req ,res) {
+    List.find({"creator.username": req.params.user}, function(err, foundLists) {
+        if(err) {
+            console.log(err);
+            res.redirect("/lists");
+        }
+        else {
+            res.render("memberReadings", {lists: foundLists});
+        }
+    });
+});
+
+// 
 // Middleware
 // 
 function isLoggedIn(req, res, next) {
