@@ -24,6 +24,14 @@
                         <a class="item" href="/logout">Logout</a>
                     <% } %>
                 </div>
-                <!--<a class="item" href="/test">Test</a>-->
             </div>
         </div>
+        <div class="ui container flash">
+            <% if (error && error.length > 0) { %>
+                <div class="ui negative message"><%= error %></div>
+            <% } %>
+            <% if (success && success.length > 0) { %>
+                <div class="ui positive message"><%= success %></div>
+            <% } %>
+        </div>
+        

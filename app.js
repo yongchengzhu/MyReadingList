@@ -2,13 +2,14 @@
 //  Package Requirements
 //------------------------------------------------------------------------------
 
-var passportLocalMongoose = require("passport-local-mongoose");
 var LocalStrategy  = require("passport-local");
 var passport       = require("passport");
 var methodOverride = require("method-override");
 var bodyParser     = require("body-parser");
 var mongoose       = require("mongoose");
 var express        = require("express");
+var flash          = require("connect-flash");
+
 var app            = express();
 
 //------------------------------------------------------------------------------
@@ -19,6 +20,7 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
+app.use(flash());
 
 app.locals.moment = require("moment");
 
@@ -63,6 +65,8 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
+    res.locals.error       = req.flash("error");
+    res.locals.success     = req.flash("success");
     next();
 });
 
@@ -147,10 +151,10 @@ app.post("/lists", function(req, res) {
     
     List.create(req.body.list, function(err, newList) {
        if (err) {
-           console.log("Cannot create new book.");
            res.render("new");
        }
        else {
+           req.flash("success", "You've added '" + newList.title + "' to your list!");
            res.redirect("/lists");
        }
     });
@@ -186,25 +190,25 @@ app.get("/lists/:id/edit", checkListOwnership, function(req, res) {
 app.put("/lists/:id", checkListOwnership, function(req, res) {
     req.body.list.created = Date(Date.now());
     
-    List.findByIdAndUpdate(req.params.id, req.body.list, function(err) {
+    List.findByIdAndUpdate(req.params.id, req.body.list, function(err, foundList) {
         if (err) {
-            console.log("Cannot update this book.");
             res.redirect("/lists");
         }
         else {
-            res.redirect("/lists/" + req.params.id);
+            req.flash("success", "You've updated '" + foundList.title + "' from your list!");
+            res.redirect("/lists");
         }
     });
 });
 
 //-- Delete --//
 app.delete("/lists/:id", checkListOwnership, function(req, res) {
-    List.findByIdAndRemove(req.params.id, req.body.list, function(err) {
+    List.findByIdAndRemove(req.params.id, req.body.list, function(err, foundList) {
         if (err) {
-            console.log("Cannot remove this book.");
             res.redirect("/lists");
         }
         else {
+            req.flash("success", "You've removed '" + foundList.title + "' from your list!");
             res.redirect("/lists");
         }
     });
@@ -223,10 +227,12 @@ app.get("/register", function(req, res) {
 app.post("/register", function(req, res) {
     User.register(new User({username: req.body.username}), req.body.password, function(err, createdUser) {
         if (err) {
+            req.flash("error", err.message);
             res.redirect("/register");
         }
         else {
             passport.authenticate("local")(req, res, function() {
+                req.flash("success", "Welcome to MyReadingList, " + createdUser.username + "!");
                 res.redirect("/lists");
             });
         }
@@ -243,8 +249,14 @@ app.get("/login", function(req, res) {
 // 
 // Login: Create route
 // 
-app.post("/login", passport.authenticate("local", {successRedirect: "/lists", failureRedirect: "/login"}), function(req, res) {
-
+app.post("/login", passport.authenticate("local", {
+    // successRedirect: "/lists", 
+    failureRedirect: "/login",
+    failureFlash: true
+    // successFlash: "Welcome back!"
+}), function(req, res) {
+    req.flash("success", "Welcome back, " + req.user.username + "!");
+    res.redirect("/lists");
 });
 
 // 
@@ -252,6 +264,7 @@ app.post("/login", passport.authenticate("local", {successRedirect: "/lists", fa
 // 
 app.get("/logout", function(req, res) {
     req.logout();
+    req.flash("success", "You've logged out!");
     res.redirect("/lists");
 });
 
@@ -293,6 +306,7 @@ function isLoggedIn(req, res, next) {
         return next();
     }
     else {
+        req.flash("error", "You need to be logged in to do that!");
         res.redirect("/login");
     }
 }
