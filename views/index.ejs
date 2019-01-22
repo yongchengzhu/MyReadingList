@@ -29,7 +29,7 @@
             <th id="genreLabel">Genre</th>
             <th id="ratingLabel">Rating</th>
             <th id="authorLabel">Author</th>
-            <th id="createdLabel">Last Activity Timestamp</th>
+            <th id="createdLabel">Last Updated</th>
         </tr></thead>
         <tbody>
         <% lists.forEach(function(list, i) { %>
@@ -44,7 +44,7 @@
                     <td><%= list.genre %></td>
                     <td><div class="ui mini heart rating" data-rating=<%= list.rating %>></div></td>
                     <td><%= list.author %></td>
-                    <td><%= list.created.toLocaleDateString() %> <%= list.created.toLocaleTimeString() %></td>
+                    <td><%= moment(list.created).fromNow() %></td>
                 <% } %>
             </tr>
         <% }); %>

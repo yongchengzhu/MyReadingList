@@ -20,6 +20,8 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
+app.locals.moment = require("moment");
+
 //------------------------------------------------------------------------------
 //  Database Configurations
 //------------------------------------------------------------------------------
@@ -70,6 +72,7 @@ app.use(function(req, res, next) {
   
 //-- Root --//
 app.get("/", function(req, res) {
+    // res.render("landing")
     res.redirect("/lists");
 });
 
@@ -81,7 +84,7 @@ app.get("/lists", function(req, res) {
            console.log(err);
        }
        else {
-           res.render("index", {lists: lists});
+           res.render("index", {lists: lists, page: "home"});
        }
     });
 });
@@ -132,7 +135,7 @@ app.post("/lists/sorted", function(req, res) {
 
 //-- New --//
 app.get("/lists/new", isLoggedIn, function(req, res) {
-   res.render("new");
+   res.render("new", {page: "new"});
 });
 
 //-- Create --//
@@ -211,7 +214,7 @@ app.delete("/lists/:id", checkListOwnership, function(req, res) {
 // Register: New Route
 // 
 app.get("/register", function(req, res) {
-    res.render("register");
+    res.render("register", {page: "register"});
 });
 
 // 
@@ -234,14 +237,14 @@ app.post("/register", function(req, res) {
 // Login: New route
 // 
 app.get("/login", function(req, res) {
-    res.render("login");
+    res.render("login", {page: "login"});
 });
 
 // 
 // Login: Create route
 // 
 app.post("/login", passport.authenticate("local", {successRedirect: "/lists", failureRedirect: "/login"}), function(req, res) {
-    
+
 });
 
 // 
