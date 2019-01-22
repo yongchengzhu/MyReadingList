@@ -24,12 +24,12 @@
     <!--Table-->
     <table class="ui selectable celled table">
         <thead><tr>
-            <th id="titleLabel">Title</th>
-            <th id="lastReadLabel">Last Read</th>
-            <th id="genreLabel">Genre</th>
-            <th id="ratingLabel">Rating</th>
-            <th id="authorLabel">Author</th>
-            <th id="createdLabel">Last Updated</th>
+            <th id="titleLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'title' ? 'background-color: lightgrey;' : '' %>">Title</th>
+            <th id="lastReadLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'lastRead' ? 'background-color: lightgrey;' : '' %>">Last Read</th>
+            <th id="genreLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'genre' ? 'background-color: lightgrey;' : '' %>">Genre</th>
+            <th id="ratingLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'rating' ? 'background-color: lightgrey;' : '' %>">Rating</th>
+            <th id="authorLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'author' ? 'background-color: lightgrey;' : '' %>">Author</th>
+            <th id="createdLabel" style="<%= typeof sortBy == 'undefined' || sortBy === 'created' ? 'background-color: lightgrey;' : '' %>">Last Updated</th>
         </tr></thead>
         <tbody>
         <% lists.forEach(function(list, i) { %>

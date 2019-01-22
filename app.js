@@ -103,7 +103,7 @@ app.get("/lists/sorted", function(req, res) {
             console.log("Cannot sort.");
         }
         else {
-            res.render("index", {lists: sortedLists});
+            res.render("index", {lists: sortedLists, sortBy: key});
         }
     });
 });
@@ -253,6 +253,21 @@ app.post("/login", passport.authenticate("local", {successRedirect: "/lists", fa
 app.get("/logout", function(req, res) {
     req.logout();
     res.redirect("/lists");
+});
+
+// 
+// Members Route
+// 
+app.get("/members", function(req, res) {
+    User.find({}, function(err, foundUsers) {
+        if (err) {
+            console.log(err);
+            res.redirect("/lists");
+        }
+        else {
+            res.render("members", {users: foundUsers, page: "members"});
+        }
+    });
 });
 
 // 
