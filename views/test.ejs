@@ -17,7 +17,11 @@
         // var test = $(".ui.rating").rating("get rating");
         
         
-        $('.asdf').popup();
+        $('.asdf').hide();
+        
+        $('p').on("click", function() {
+            $(".asdf").transition('drop')
+        })
     </script>
     
 </div>

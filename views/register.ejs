@@ -1,13 +1,27 @@
 <% include ./partials/header %>
 
-<div class="ui container main">
-    <h1>Sign Up Page</h1>
-    
-    <form action="/register" method="POST">
-        <input type="text" name="username" placeholder="username">
-        <input type="password" name="password" placeholder="password">
-        <button>Sign Up</button>
-    </form>
+<div class="ui container main segment" style="width: 25%;">
+    <div class="ui form">
+        <div class="ui header dividing">Sign Up Page</div>
+        
+        <form action="/register" method="POST" enctype="multipart/form-data">
+            <div class="field required">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="username" required>
+            </div>
+            <div class="field required">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="password" required>
+            </div>
+            <div class="field">
+                <label>Profile Image</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+                <!--<input type="text" name="avatar" placeholder="image link" required>-->
+            </div>
+            
+            <button class="ui button">Sign Up</button>
+        </form>
+    </div>
 </div>
 
 <% include ./partials/footer %>

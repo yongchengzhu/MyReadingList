@@ -11,8 +11,12 @@
         <div class="ui menu fixed inverted">
             <div class="ui container">
                 <a class="item header" href="/"><i class="icon book"></i>MyReadingList</a>
-                <a class="item <%= typeof page !== 'undefined' && page === 'home' ? 'active' : '' %>" href="/">Home</a>
-                <a class="item <%= typeof page !== 'undefined' && page === 'new' ? 'active' : '' %>" href="/lists/new">Add New</a>
+                <% if (currentUser) { %>
+                
+                    
+                    <a class="item <%= typeof page !== 'undefined' && page === 'home' ? 'active' : '' %>" href="/<%= currentUser.username %>/books">Home</a>
+                    <a class="item <%= typeof page !== 'undefined' && page === 'new' ? 'active' : '' %>" href="/<%= currentUser.username %>/new">Add New</a>
+                <% } %>
                 <a class="item <%= typeof page !== 'undefined' && page === 'members' ? 'active' : '' %>" href="/members">Members</a>
                 
                 <div class="right menu">
@@ -20,7 +24,7 @@
                         <a class="item <%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>" href="/login">Login</a>
                         <a class="item <%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>" href="/register">Register</a>
                     <% } else {%>
-                        <a class="item"><%= currentUser.username %></a>
+                        <a class="item" href="/<%= currentUser.username %>/profile"><%= currentUser.username %></a>
                         <a class="item" href="/logout">Logout</a>
                     <% } %>
                 </div>

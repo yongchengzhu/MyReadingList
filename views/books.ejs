@@ -1,0 +1,81 @@
+<% include ./partials/header.ejs %>
+
+<div class="ui container main">
+    <!-- Forms For Sorting -->
+    <% if (lists && lists.length > 0) { %>
+        <form id="titleForm" action="/<%= lists[0].creator.username %>/books/sorted" method="POST">
+            <input type="hidden" name="sort" value="title">
+        </form>
+        <form id="lastReadForm" action="/<%= lists[0].creator.username %>/books/sorted" method="POST">
+            <input type="hidden" name="sort" value="lastRead">
+        </form>
+        <form id="genreForm" action="/<%= lists[0].creator.username %>/books/sorted" method="POST">
+            <input type="hidden" name="sort" value="genre">
+        </form>
+        <form id="ratingForm" action="/<%= lists[0].creator.username %>/books/sorted" method="POST">
+            <input type="hidden" name="sort" value="rating">
+        </form>
+        <form id="authorForm" action="/<%= lists[0].creator.username %>/books/sorted" method="POST">
+            <input type="hidden" name="sort" value="author">
+        </form>
+        <form id="createdForm" action="/<%= lists[0].creator.username %>/books/sorted" method="POST">
+            <input type="hidden" name="sort" value="created">
+        </form>
+    <% } %>
+    
+    <!--Table-->
+    <table class="ui selectable celled table">
+        <thead><tr>
+            <th id="titleLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'title' ? 'background-color: lightgrey;' : '' %>">Title</th>
+            <th id="lastReadLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'lastRead' ? 'background-color: lightgrey;' : '' %>">Last Read</th>
+            <th id="genreLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'genre' ? 'background-color: lightgrey;' : '' %>">Genre</th>
+            <th id="ratingLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'rating' ? 'background-color: lightgrey;' : '' %>">Rating</th>
+            <th id="authorLabel" style="<%= typeof sortBy !== 'undefined' && sortBy === 'author' ? 'background-color: lightgrey;' : '' %>">Author</th>
+            <th id="createdLabel" style="<%= typeof sortBy == 'undefined' || sortBy === 'created' ? 'background-color: lightgrey;' : '' %>">Last Updated</th>
+        </tr></thead>
+        <tbody>
+        <% lists.forEach(function(list, i) { %>
+            <tr>
+                <td>
+                    <a href="/<%= lists[0].creator.username %>/books/<%=list._id%>" class="popupTest" data-html="<img class='ui image rounded small' src='<%= list.image %>'>" data-position="left center">
+                        <%= list.title %>
+                    </a>
+                </td>
+                <td><%= list.lastRead %></td>
+                <td><%= list.genre %></td>
+                <td><div class="ui mini heart rating" data-rating=<%= list.rating %>></div></td>
+                <td><%= list.author %></td>
+                <td><%= moment(list.created).fromNow() %></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $('.ui.rating').rating({ maxRating: 5 });
+    $('.ui.rating').rating("disable");
+    
+    $('#titleLabel').on("click", function() {
+        $("#titleForm").submit();
+    });
+    $('#lastReadLabel').on("click", function() {
+        $("#lastReadForm").submit();
+    });
+    $('#genreLabel').on("click", function() {
+        $("#genreForm").submit();
+    });
+    $('#ratingLabel').on("click", function() {
+        $("#ratingForm").submit();
+    });
+    $('#authorLabel').on("click", function() {
+        $("#authorForm").submit();
+    });
+    $('#createdLabel').on("click", function() {
+        $("#createdForm").submit();
+    });
+    
+    $(".popupTest").popup();
+</script>
+
+<% include ./partials/footer.ejs %>

@@ -1,13 +1,22 @@
 <% include ./partials/header %>
 
-<div class="ui container main">
-    <h1>Login Page</h1>
-    
-    <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="username">
-        <input type="password" name="password" placeholder="password">
-        <button>Log In</button>
-    </form>
+<div class="ui container main segment" style="width: 25%;">
+    <div class="ui form">
+        <div class="ui header dividing">Login Page</div>
+        
+        <form action="/login" method="POST">
+            <div class="field required">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="username" required>
+            </div>
+            <div class="field required">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="password" required>
+            </div>
+            
+            <button class="ui button">Log In</button>
+        </form>
+    </div>
 </div>
 
 <% include ./partials/footer %>

@@ -40,22 +40,22 @@ body {
 }
 
 .slideshow li:nth-child(1) { 
-  background-image: url() 
+  background-image: url(https://i.pximg.net/img-master/img/2014/12/21/19/34/49/47671599_p0_master1200.jpg) 
 }
 .slideshow li:nth-child(2) { 
-  background-image: url();
+  background-image: url(https://i.pximg.net/img-master/img/2018/12/19/00/54/01/72177032_p0_master1200.jpg);
   animation-delay: 10s; 
 }
 .slideshow li:nth-child(3) { 
-  background-image: url();
+  background-image: url(https://i.pximg.net/img-master/img/2018/03/28/01/10/21/67948637_p0_master1200.jpg);
   animation-delay: 20s; 
 }
 .slideshow li:nth-child(4) { 
-  background-image: url();
+  background-image: url(https://i.pximg.net/img-master/img/2016/12/22/00/07/05/60480856_p0_master1200.jpg);
   animation-delay: 30s; 
 }
 .slideshow li:nth-child(5) { 
-  background-image: url();
+  background-image: url(https://i.pximg.net/img-original/img/2016/01/28/00/29/52/54943763_p0.png);
   animation-delay: 40s; 
 }
 

@@ -9,8 +9,37 @@ var bodyParser     = require("body-parser");
 var mongoose       = require("mongoose");
 var express        = require("express");
 var flash          = require("connect-flash");
-
+var dotenv         = require('dotenv');
 var app            = express();
+
+//------------------------------------------------------------------------------
+//  Cloudinary and Multer Configurations
+//------------------------------------------------------------------------------
+
+var multer = require('multer');
+var storage = multer.diskStorage({
+    filename: function(req, file, callback) {
+        callback(null, Date.now() + file.originalname);
+    }
+});
+var imageFilter = function (req, file, cb) {
+    // accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+var upload = multer({ storage: storage, fileFilter: imageFilter});
+
+var cloudinary = require('cloudinary');
+
+dotenv.config();
+
+cloudinary.config({ 
+    cloud_name: 'yongchengzhu', 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 //------------------------------------------------------------------------------
 //  App Configurations
@@ -46,6 +75,22 @@ var User = require("./models/user.js");
 //     }
 // });
 
+// User.update({}, { $set: { rank: "Member" } }, { multi: true }, function(err, updatedUsers) {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(updatedUsers);
+//     }
+// });
+
+// User.update({ username: "ycz"}, { $set: { rank: "Administrator"} }, function(err, updatedUser) {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(updatedUser);
+//     }    
+// });
+
 //------------------------------------------------------------------------------
 //  Passport Configurations
 //------------------------------------------------------------------------------
@@ -74,46 +119,36 @@ app.use(function(req, res, next) {
 //  Routes
 //------------------------------------------------------------------------------
   
-//-- Root --//
+// 
+// ROOT: Landing page.
+// 
 app.get("/", function(req, res) {
-    // res.render("landing")
-    res.redirect("/lists");
+    res.render("landing")
+    // res.redirect("/login");
 });
 
-//-- Index --//
-app.get("/lists", function(req, res) {
-    List.find({}).sort({created: "-1"}).exec(function(err, lists) {
-        if (err) {
-           console.log("Cannot find books for index.");
-           console.log(err);
-       }
-       else {
-           res.render("index", {lists: lists, page: "home"});
-       }
-    });
-});
-
-//-- Sort --//
+// 
+// SORT
+// 
 var sortOrder = -1;
 var key;
 
-app.get("/lists/sorted", function(req, res) {
+app.get("/:user/books/sorted", function(req, res) {
     var sortObj = {};
     
     sortObj[key] = sortOrder;
     
-    List.find({}).sort(sortObj).exec(function(err, sortedLists) {
+    List.find({"creator.username": req.params.user}).sort(sortObj).exec(function(err, sortedLists) {
         if (err) {
             console.log("Cannot sort.");
         }
         else {
-            res.render("index", {lists: sortedLists, sortBy: key});
+            res.render("books", {lists: sortedLists, sortBy: key});
         }
     });
 });
 
-
-app.post("/lists/sorted", function(req, res) {
+app.post("/:user/books/sorted", function(req, res) {
     var sortObj = {};
     
     if (key == req.body.sort) {
@@ -126,90 +161,121 @@ app.post("/lists/sorted", function(req, res) {
     
     sortObj[key] = sortOrder;
     
-    List.find({}).sort(sortObj).exec(function(err, sortedLists) {
+    List.find({"creator.username": req.params.user}).sort(sortObj).exec(function(err, sortedLists) {
         if (err) {
             console.log("Cannot sort.");
         }
         else {
-            // res.render("index", {lists: sortedLists});
-            res.redirect("/lists/sorted");
+            // res.redirect("/" + req.user.username + "/books/sorted");
+            // res.render("books", {lists: sortedLists, sortBy: key});
+            res.redirect("/" + req.params.user + "/books/sorted");
         }
     });
 });
 
-//-- New --//
-app.get("/lists/new", isLoggedIn, function(req, res) {
-   res.render("new", {page: "new"});
+// 
+// INDEX: Show all user books.
+// 
+app.get("/:user/books", function(req, res) {
+    List.find({"creator.username": req.params.user}).sort({created: "-1"}).exec(function(err, lists) {
+        if (err) {
+           console.log(err);
+       }
+       else {
+           res.render("books", {lists: lists, page: "home"});
+       }
+    });
 });
 
-//-- Create --//
-app.post("/lists", function(req, res) {
+// 
+// NEW: Show form to add new book.
+// 
+app.get("/:user/new", isLoggedIn, function(req, res) {
+    res.render("books_new", {page: "new"});
+});
+
+// 
+// CREATE: Add a new book into the database.
+// 
+app.post("/:user/books", isLoggedIn, function(req, res) {
+    // Push user information into this book.
     req.body.list.creator = {
         id: req.user._id,
         username: req.user.username
     };
     
-    List.create(req.body.list, function(err, newList) {
+    List.create(req.body.list, function(err, newBook) {
        if (err) {
-           res.render("new");
+           req.flash("error", "Cannot add this book into the database!");
+           res.render("back");
        }
        else {
-           req.flash("success", "You've added '" + newList.title + "' to your list!");
-           res.redirect("/lists");
+           req.flash("success", "You've added '" + newBook.title + "' into your list!");
+           res.redirect("/" + req.user.username + "/books");
+       }
+    });    
+});
+
+// 
+// SHOW: Show more information about this book.
+// 
+app.get("/:user/books/:book_id", function(req, res) {
+    List.findById(req.params.book_id, function(err, foundBook) {
+       if (err) {
+           req.flash("error", "Cannot find this book in the database!");
+           res.redirect("back");
+       }
+       else {
+           res.render("books_show", {list: foundBook});
        }
     });
 });
 
-//-- Show --//
-app.get("/lists/:id", function(req, res) {
-    List.findById(req.params.id, function(err, foundList) {
-       if (err) {
-           console.log("Cannot find this book for show.");
-           res.redirect("/lists");
-       }
-       else {
-           res.render("show", {list: foundList});
-       }
-    });
-});
-
-//-- Edit --//
-app.get("/lists/:id/edit", checkListOwnership, function(req, res) {
-    List.findById(req.params.id, function(err, foundList) {
+// 
+// EDIT: Show form to edit current book.
+// 
+app.get("/:user/books/:book_id/edit", checkListOwnership, function(req, res) {
+    List.findById(req.params.book_id, function(err, foundBook) {
         if (err) {
-            console.log("Cannot find list to edit.");
-            res.redirect("/lists");
+            req.flash("error", "Cannot find this book in the database!");
+            res.redirect("back");
         }
         else {
-            res.render("edit", {list: foundList});
+            res.render("books_edit", {list: foundBook});
         }
     });
 });
 
-//-- Update --//
-app.put("/lists/:id", checkListOwnership, function(req, res) {
+// 
+// UPDATE: Make changes to current book in the database.
+// 
+app.put("/:user/books/:book_id", checkListOwnership, function(req, res) {
     req.body.list.created = Date(Date.now());
-    
-    List.findByIdAndUpdate(req.params.id, req.body.list, function(err, foundList) {
+    console.log("/" + req.params.user + "/books");
+    List.findByIdAndUpdate(req.params.book_id, req.body.list, function(err, foundBook) {
         if (err) {
-            res.redirect("/lists");
+            req.flash("error", "Cannot find this book in the database!");
+            res.redirect("back");
         }
         else {
-            req.flash("success", "You've updated '" + foundList.title + "' from your list!");
-            res.redirect("/lists");
+            req.flash("success", "You've updated '" + foundBook.title + "' on your list!");
+            res.redirect("/" + req.params.user + "/books");
         }
-    });
+    });    
 });
 
-//-- Delete --//
-app.delete("/lists/:id", checkListOwnership, function(req, res) {
-    List.findByIdAndRemove(req.params.id, req.body.list, function(err, foundList) {
+// 
+// Delete: Remove current book from the database.
+// 
+app.delete("/:user/books/:book_id", checkListOwnership, function(req, res) {
+    List.findByIdAndRemove(req.params.book_id, req.body.list, function(err, foundBook) {
         if (err) {
-            res.redirect("/lists");
+            req.flash("error", "Cannot find this book in the database!");
+            res.redirect("back");
         }
         else {
-            req.flash("success", "You've removed '" + foundList.title + "' from your list!");
-            res.redirect("/lists");
+            req.flash("success", "You've removed '" + foundBook.title + "' from your list!");
+            res.redirect("/" + req.params.user + "/books");
         }
     });
 });
@@ -224,19 +290,24 @@ app.get("/register", function(req, res) {
 // 
 // Register: Create route
 // 
-app.post("/register", function(req, res) {
-    User.register(new User({username: req.body.username}), req.body.password, function(err, createdUser) {
-        if (err) {
-            req.flash("error", err.message);
-            res.redirect("/register");
-        }
-        else {
-            passport.authenticate("local")(req, res, function() {
-                req.flash("success", "Welcome to MyReadingList, " + createdUser.username + "!");
-                res.redirect("/lists");
-            });
-        }
+app.post("/register", upload.single('image'), function(req, res) {
+    cloudinary.uploader.upload(req.file.path, function(result) {
+        req.body.avatar = result.secure_url;
+        
+        User.register(new User({username: req.body.username, avatar: req.body.avatar}), req.body.password, function(err, createdUser) {
+            if (err) {
+                req.flash("error", err.message);
+                res.redirect("/register");
+            }
+            else {
+                passport.authenticate("local")(req, res, function() {
+                    req.flash("success", "Welcome to MyReadingList, " + createdUser.username + "!");
+                    res.redirect("/" + createdUser.username + "/books");
+                });
+            }
+        });        
     });
+
 });
 
 // 
@@ -256,7 +327,7 @@ app.post("/login", passport.authenticate("local", {
     // successFlash: "Welcome back!"
 }), function(req, res) {
     req.flash("success", "Welcome back, " + req.user.username + "!");
-    res.redirect("/lists");
+    res.redirect("/" + req.user.username + "/books");
 });
 
 // 
@@ -265,7 +336,7 @@ app.post("/login", passport.authenticate("local", {
 app.get("/logout", function(req, res) {
     req.logout();
     req.flash("success", "You've logged out!");
-    res.redirect("/lists");
+    res.redirect("/");
 });
 
 // 
@@ -284,18 +355,10 @@ app.get("/members", function(req, res) {
 });
 
 // 
-// See Member's Read List (Cannot modify)
+// Profile route
 // 
-app.get("/:user/lists", function(req ,res) {
-    List.find({"creator.username": req.params.user}, function(err, foundLists) {
-        if(err) {
-            console.log(err);
-            res.redirect("/lists");
-        }
-        else {
-            res.render("memberReadings", {lists: foundLists});
-        }
-    });
+app.get("/:user/profile", function(req, res) {
+    res.render("profile");
 });
 
 // 
@@ -313,12 +376,12 @@ function isLoggedIn(req, res, next) {
 
 function checkListOwnership(req, res, next) {
     if (req.isAuthenticated()) {
-        List.findById(req.params.id, function(err, foundList) {
+        List.findById(req.params.book_id, function(err, foundList) {
             if(err) {
                 res.redirect("back");
             }
             else {
-                if (foundList.creator.id.equals(req.user._id)) {
+                if (foundList.creator.id.equals(req.user._id) || req.user.rank == "Administrator") {
                     return next();
                 }
                 else {
