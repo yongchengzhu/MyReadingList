@@ -4,6 +4,10 @@
     <img class="ui image rounded small" src="<%= user[0].avatar %>">
     <p><%= user[0].username %></p>
     <p><%= user[0].rank %></pp>
+    <div>
+        <a href="/<%= user[0].username %>/books" class="ui button">View Books</a>
+    </div>
+    
     <hr>
     <% if (currentUser && currentUser.username == user[0].username || currentUser && currentUser.rank == "Administrator") { %>
         <a class="ui button" href="/<%= user[0].username %>/editProfile">Account Setting</a>
