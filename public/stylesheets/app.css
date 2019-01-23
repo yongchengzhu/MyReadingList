@@ -34,3 +34,15 @@ i.icon {
 .ui.celled.table tr th {
     cursor: pointer;
 }
+
+.ui.menu .item {
+    /*padding-top: 0.928571em;*/
+    /*padding-right: 1.14286em;*/
+    /*padding-bottom: 0.928571em;*/
+    /*padding-left: 1.14286em;*/
+    padding: 0em 1.14286em;
+}
+
+#deleteAccount {
+    display: inline;
+}

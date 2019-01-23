@@ -1,0 +1,19 @@
+<% include ./partials/header %>
+
+<div class="ui container main">
+    <div class="ui form">
+        <div class="ui header dividing">Your Profile Settings</div>
+        
+        <form action="/<%= user[0].username %>/editProfile?_method=PUT" method="POST" enctype="multipart/form-data">
+            <div class="field">
+                <label>Profile Image</label>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+            
+            <button class="ui button">Apply Changes</button><a class="ui button" href="/<%= user[0].username%>/profile">Cancel</a>
+        </form>
+    </div>
+    
+</div>
+
+<% include ./partials/footer %>

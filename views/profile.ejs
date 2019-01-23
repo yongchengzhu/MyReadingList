@@ -1,7 +1,17 @@
 <% include ./partials/header %>
 
 <div class="ui container main">
-    <img class="ui image rounded small" src="<%= currentUser.avatar %>">
+    <img class="ui image rounded small" src="<%= user[0].avatar %>">
+    <p><%= user[0].username %></p>
+    <p><%= user[0].rank %></pp>
+    <hr>
+    <% if (currentUser && currentUser.username == user[0].username || currentUser && currentUser.rank == "Administrator") { %>
+        <a class="ui button" href="/<%= user[0].username %>/editProfile">Account Setting</a>
+        
+        <form id="deleteAccount" action="/<%= user[0].username %>/editProfile/?_method=DELETE" method="POST">
+            <button class="ui button negative">Delete Account</button>
+        </form>
+    <% } %>
 </div>
 
 <% include ./partials/footer %>

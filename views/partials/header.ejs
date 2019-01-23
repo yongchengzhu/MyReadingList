@@ -24,7 +24,10 @@
                         <a class="item <%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>" href="/login">Login</a>
                         <a class="item <%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>" href="/register">Register</a>
                     <% } else {%>
-                        <a class="item" href="/<%= currentUser.username %>/profile"><%= currentUser.username %></a>
+                        <a class="item" href="/<%= currentUser.username %>/profile">
+                            <img class="ui rounded mini image" src="<%= currentUser.avatar %>">
+                            
+                        </a>
                         <a class="item" href="/logout">Logout</a>
                     <% } %>
                 </div>

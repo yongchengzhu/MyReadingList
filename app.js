@@ -291,23 +291,30 @@ app.get("/register", function(req, res) {
 // Register: Create route
 // 
 app.post("/register", upload.single('image'), function(req, res) {
-    cloudinary.uploader.upload(req.file.path, function(result) {
-        req.body.avatar = result.secure_url;
-        
-        User.register(new User({username: req.body.username, avatar: req.body.avatar}), req.body.password, function(err, createdUser) {
-            if (err) {
-                req.flash("error", err.message);
-                res.redirect("/register");
-            }
-            else {
-                passport.authenticate("local")(req, res, function() {
-                    req.flash("success", "Welcome to MyReadingList, " + createdUser.username + "!");
-                    res.redirect("/" + createdUser.username + "/books");
-                });
-            }
-        });        
+    if (req.file) {
+        cloudinary.uploader.upload(req.file.path, function(result) {
+            req.body.avatar = result.secure_url;
+            req.body.avatarId = result.public_id;     
+        });
+    }
+    else {
+        req.body.avatar = "https://semantic-ui.com/images/wireframe/image.png";
+    }
+    
+    req.body.rank = "Member";
+    
+    User.register(new User({username: req.body.username, rank: req.body.rank, avatar: req.body.avatar, avatarId: req.body.avatarId}), req.body.password, function(err, createdUser) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("/register");
+        }
+        else {
+            passport.authenticate("local")(req, res, function() {
+                req.flash("success", "Welcome to MyReadingList, " + createdUser.username + "!");
+                res.redirect("/" + createdUser.username + "/books");
+            });
+        }
     });
-
 });
 
 // 
@@ -358,7 +365,110 @@ app.get("/members", function(req, res) {
 // Profile route
 // 
 app.get("/:user/profile", function(req, res) {
-    res.render("profile");
+    User.find({ "username": req.params.user }, function(err, foundUser) {
+        if (err) {
+            req.flash("error", "Cannot find this user!");
+            res.redirect("back");
+        }
+        
+        res.render("profile", { user: foundUser });
+    });
+});
+
+// 
+// Edit Profile Settings
+// 
+app.get("/:user/editProfile", checkProfileOwnership, function(req,res) {
+    User.find({ "username": req.params.user }, function(err, foundUser) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("back");
+        }
+        else {
+            res.render("profile_edit", { user: foundUser });
+        }
+    });
+});
+
+// 
+// Update Profile Settings
+//    * Type 'nvm use 8' in commandline to use node version 8.
+// 
+app.put("/:user/editProfile", checkProfileOwnership, upload.single('image'), function(req, res) {
+    User.find({ "username": req.params.user }, async function(err, foundUser) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("back");
+        }
+        else {
+            if(req.file) {
+                //
+                // If user selected an image file.
+                // 
+                try {
+                    if (foundUser[0].avatarId) {
+                        await cloudinary.v2.uploader.destroy(foundUser[0].avatarId);
+                    }
+                    var result = await cloudinary.v2.uploader.upload(req.file.path);
+                    foundUser[0].avatarId = result.public_id;
+                    foundUser[0].avatar   = result.secure_url;
+                }
+                catch(err) {
+                    req.flash("error", err.message);
+                    return res.redirect("back");
+                }
+            }
+            console.log(foundUser[0]);
+            foundUser[0].save();
+            req.flash("success","Successfully Updated!");
+            res.redirect("/" + req.params.user + "/profile");
+        }
+    });
+});
+
+// 
+// DELETE ACCOUNT
+// 
+app.delete("/:user/editProfile", checkProfileOwnership, function(req, res) {
+    // 
+    // 1. Find this user in the database
+    // 2. Find all the books that belong to this user.
+    // 3. Delete all the books
+    // 4. Delete avatar image from cloudinary.
+    // 5. Delete this user. 'user.remove()'
+    // 
+    User.find({ "username": req.params.user }, async function(err, foundUser) {
+        if (err) {
+            req.flash("error", err.message);
+            return res.redirect("back");
+        }
+        else {
+            List.find({ "creator.username": foundUser[0].username }, function(err, foundBooks) {
+                if (err) {
+                    req.flash("error", err.message);
+                    return res.redirect("back");
+                }
+                else {
+                    foundBooks.forEach(function(book) {
+                        book.remove();
+                    });
+                }
+            });
+            
+            try {
+                if (foundUser[0].avatarId) {
+                    await cloudinary.v2.uploader.destroy(foundUser[0].avatarId);
+                }
+                req.flash('success', "You've successfully removed your account!");
+                res.redirect("/login");
+                foundUser[0].remove();
+            }
+            catch(err) {
+                req.flash("error", err.message);
+                return res.redirect("back");
+            }
+        }
+    });
 });
 
 // 
@@ -389,6 +499,27 @@ function checkListOwnership(req, res, next) {
                 }
             }
         })
+    }
+}
+
+function checkProfileOwnership (req, res, next) {
+    if (req.isAuthenticated()) {
+        User.find({ "username": req.params.user }, function(err, foundUser) {
+            if (err) {
+                res.redirect("back");
+            }
+            else {
+                if (foundUser[0].username == req.user.username || req.user.rank == "Administrator") {
+                    return next();
+                }
+                else {
+                    res.redirect("back");
+                }
+            }
+        });
+    }
+    else {
+        res.redirect("/")
     }
 }
 
