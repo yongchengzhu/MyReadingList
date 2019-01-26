@@ -35,7 +35,7 @@ i.icon {
     cursor: pointer;
 }
 
-.ui.menu .item {
+.ui.menu.fixed .item {
     /*padding-top: 0.928571em;*/
     /*padding-right: 1.14286em;*/
     /*padding-bottom: 0.928571em;*/

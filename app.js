@@ -58,7 +58,7 @@ app.locals.moment = require("moment");
 //------------------------------------------------------------------------------
 
 mongoose.connect(
-    "mongodb://localhost:27017/webreadinglist_app", {useNewUrlParser:true}
+    "mongodb://localhost/webreadinglist_app", {useNewUrlParser:true}
 );
 
 var List = require("./models/list.js");
@@ -172,6 +172,25 @@ app.post("/:user/books/sorted", function(req, res) {
         }
     });
 });
+
+// 
+// Genre Filter
+// 
+app.get("/:user/books/genre/:genre", function(req, res) {
+    if (req.params.genre == "shounen") {
+        req.params.genre = "少年";
+    } else {
+        req.params.genre = "少女";
+    }
+    List.find({ "creator.username": req.params.user, genre: req.params.genre }, function(err, foundBooks) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("back");
+        } else {
+            res.render("books", {lists: foundBooks, page: req.params.genre});
+        }
+    })
+})
 
 // 
 // INDEX: Show all user books.
@@ -533,6 +552,6 @@ app.get("/test", function(req, res) {
 //  Cloud9 Server
 //------------------------------------------------------------------------------
 
-app.listen(process.env.PORT, process.env.IP, function() {
+app.listen(3000, function() {
    console.log("Server is up..."); 
 });
